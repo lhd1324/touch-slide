@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>移动端滑动方向的判断</title>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+		<style>
+			.slide{
+				width:100%;
+				height:200px;
+				background-color: red;
+				color:#fff;
+			}
+			.drag{
+				position:fixed;
+				top:230px;
+				left:20px;
+				width:50px;
+				height:50px;
+				border-radius: 100%;
+				background-color: yellow;
+				color:#333;
+				text-align: center;
+				line-height: 50px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="slide" id="slide">
+			判断滑动方向
+		</div>
+		<div class="drag" id="drag">拖拽</div>
+	</body>
+	<script>
+		window.onload=function(){
+			var slide={
+				startx:0,
+				starty:0,
+				endx:0,
+				endy:0,
+				slidestart:function(e){
+					var that=this;
+					that.startx=e.touches[0].pageX;
+					that.starty=e.touches[0].pageY;
+				},
+				movefun:function(e){
+					var that=this;
+					var wwidth=window.innerWidth;
+					var wheight=window.innerHeight;
+					var w=that.selele("drag").clientWidth;
+					var h=that.selele("drag").clientHeight;
+					var ex=e.touches[0].pageX;
+					var ey=e.touches[0].pageY;
+					if(ex-w/2<0){
+						that.selele("drag").style.left=0+"px";
+					}else if(ex+w/2>wwidth){
+						that.selele("drag").style.left=wwidth-w+"px";
+					}else{
+						that.selele("drag").style.left=e.touches[0].pageX-w/2+"px";
+					}
+					if(ey-h/2<0){
+						that.selele("drag").style.top=0+"px";
+					}else if(ey+h/2>wheight){
+						that.selele("drag").style.top=wheight-h+"px";
+					}else{
+						that.selele("drag").style.top=e.touches[0].pageY-h/2+"px";
+					}
+				},
+				slideend:function(e){
+					var that=this;
+					that.endx=e.changedTouches[0].pageX;
+					that.endy=e.changedTouches[0].pageY;
+					that.dirresult();
+				},
+				//
+				dirresult:function(){
+					var that=this;
+					var x=that.endx-that.startx;
+					var y=that.endy-that.starty;
+					that.reset();
+					alert("在x轴向滑动:"+x+" || "+"在y轴向滑动:"+y);
+				},
+				//选择元素
+				selele:function(obj){
+					return document.getElementById(obj);
+				},
+				//绑定事件
+				bindevent:function(){
+					var that=this;
+					that.selele("slide").ontouchstart=function(e){
+						that.slidestart(e);
+					}
+					that.selele("slide").ontouchend=function(e){
+						that.slideend(e);
+					}
+					that.selele("drag").ontouchmove=function(e){
+						that.movefun(e);
+					}
+				},
+				reset:function(){
+					this.startx=this.starty=this.endx=this.endy=0;
+				}
+			}
+			slide.bindevent();
+
+		}
+	</script>
+</html>
